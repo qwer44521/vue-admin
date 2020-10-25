@@ -20,7 +20,7 @@ export function filterAsyncRoutes(routes) {
       children: route.children || undefined
     }
     tmp.meta.title = route.title
-    if (route.hidden === 1) {
+    if (route.hidden === 0) {
       tmp.hidden = false
     } else {
       tmp.hidden = true
