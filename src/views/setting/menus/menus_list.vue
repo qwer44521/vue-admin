@@ -31,10 +31,9 @@
     <div class="box">
       <el-drawer
         ref="drawer"
-        title="我嵌套了 Form !"
         :before-close="handleClose"
         :visible.sync="dialog"
-        direction="ltr"
+        direction="rtl"
         custom-class="demo-drawer"
       >
         <div class="demo-drawer__content">
@@ -59,7 +58,6 @@
     <!--侧边弹窗-->
   </div>
 </template>
-
 <script>
 import { getMenuList } from '@/api/menu_list'
 
@@ -82,6 +80,8 @@ export default {
       // 菜单表格数据
       menusList: [],
       // 表单数据
+      dialog: false,
+      loading: false,
       form: {
         name: '',
         region: '',
@@ -130,7 +130,6 @@ export default {
   }
 }
 </script>
-
 <style scoped>
 
 </style>
