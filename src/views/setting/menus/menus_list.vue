@@ -51,28 +51,28 @@
                 <el-input-number v-model="form.sort" controls-position="right" :min="0" />
               </el-form-item>
             </el-col>
-            <!--            <el-col :span="24">-->
-            <!--              <el-form-item label="菜单图标">-->
-            <!--                <el-popover-->
-            <!--                  placement="bottom-start"-->
-            <!--                  width="460"-->
-            <!--                  trigger="click"-->
-            <!--                  @show="$refs['iconSelect'].reset()"-->
-            <!--                >-->
-            <!--                  <IconSelect ref="iconSelect" @selected="selected" />-->
-            <!--                  <el-input slot="reference" v-model="form.icon" placeholder="点击选择图标" readonly>-->
-            <!--                    <svg-icon-->
-            <!--                      v-if="form.icon"-->
-            <!--                      slot="prefix"-->
-            <!--                      :icon-class="form.icon"-->
-            <!--                      class="el-input__icon"-->
-            <!--                      style="height: 32px;width: 16px;"-->
-            <!--                    />-->
-            <!--                    <i v-else slot="prefix" class="el-icon-search el-input__icon" />-->
-            <!--                  </el-input>-->
-            <!--                </el-popover>-->
-            <!--              </el-form-item>-->
-            <!--            </el-col>-->
+            <el-col :span="24">
+              <el-form-item label="菜单图标">
+                <el-popover
+                  placement="bottom-start"
+                  width="460"
+                  trigger="click"
+                  @show="$refs['iconSelect'].reset()"
+                >
+                  <IconSelect ref="iconSelect" @selected="selected" />
+                  <el-input slot="reference" v-model="form.icon" placeholder="点击选择图标" readonly>
+                    <svg-icon
+                      v-if="form.icon"
+                      slot="prefix"
+                      :icon-class="form.icon"
+                      class="el-input__icon"
+                      style="height: 32px;width: 16px;"
+                    />
+                    <i v-else slot="prefix" class="el-icon-search el-input__icon" />
+                  </el-input>
+                </el-popover>
+              </el-form-item>
+            </el-col>
             <el-col :span="12">
               <el-form-item label="英文标识" prop="menuName">
                 <el-input v-model="form.name" placeholder="请输入路由名称" />
@@ -113,8 +113,10 @@
 </template>
 <script>
 import { getMenuList } from '@/api/menu_list'
+import IconSelect from '@/components/IconSelect'
 export default {
   name: 'MenusList',
+  components: { IconSelect },
   filters: {
     filterHidden: function(value) {
       switch (value) {
@@ -141,6 +143,9 @@ export default {
     this.getMenu()
   },
   methods: {
+    selected(name) {
+      this.form.icon = name
+    },
     getMenu() {
       getMenuList().then(response => {
         this.menusList = response.data
