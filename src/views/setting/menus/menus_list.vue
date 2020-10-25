@@ -1,17 +1,17 @@
 <template>
   <div class="app-container">
     <el-button type="primary" @click="handleAdd">添加菜单</el-button>
-    <el-form :inline="true">
-      <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-        >新增
-        </el-button>
-      </el-form-item>
-    </el-form>
+    <!--    <el-form :inline="true">-->
+    <!--      <el-form-item>-->
+    <!--&lt;!&ndash;        <el-button&ndash;&gt;-->
+    <!--&lt;!&ndash;          type="primary"&ndash;&gt;-->
+    <!--&lt;!&ndash;          icon="el-icon-plus"&ndash;&gt;-->
+    <!--&lt;!&ndash;          size="mini"&ndash;&gt;-->
+    <!--&lt;!&ndash;          @click="handleAdd"&ndash;&gt;-->
+    <!--&lt;!&ndash;        >新增&ndash;&gt;-->
+    <!--&lt;!&ndash;        </el-button>&ndash;&gt;-->
+    <!--      </el-form-item>-->
+    <!--    </el-form>-->
     <!--    菜单列表主题-->
     <div class="table">
       <el-table :data="menusList" style="width: 100%">
