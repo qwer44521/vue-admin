@@ -1,6 +1,17 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" plain @click="dialog = true">添加菜单</el-button>
+    <el-button type="primary" @click="handleAdd">添加菜单</el-button>
+    <el-form :inline="true">
+      <el-form-item>
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+        >新增
+        </el-button>
+      </el-form-item>
+    </el-form>
     <!--    菜单列表主题-->
     <div class="table">
       <el-table :data="menusList" style="width: 100%">
@@ -25,42 +36,83 @@
           </template>
         </el-table-column>
       </el-table>
-      <!--      菜单列表结束-->
-    </div>
-    <!--侧边弹窗-->
-    <div class="box">
-      <el-drawer
-        ref="drawer"
-        :before-close="handleClose"
-        :visible.sync="dialog"
-        direction="rtl"
-        custom-class="demo-drawer"
-      >
-        <div class="demo-drawer__content">
-          <el-form :model="form">
-            <el-form-item label="活动名称" :label-width="formLabelWidth">
-              <el-input v-model="form.name" autocomplete="off" />
-            </el-form-item>
-            <el-form-item label="活动区域" :label-width="formLabelWidth">
-              <el-select v-model="form.region" placeholder="请选择活动区域">
-                <el-option label="区域一" value="shanghai" />
-                <el-option label="区域二" value="beijing" />
-              </el-select>
-            </el-form-item>
-          </el-form>
-          <div class="demo-drawer__footer">
-            <el-button @click="cancelForm">取 消</el-button>
-            <el-button type="primary" :loading="loading" @click="$refs.drawer.closeDrawer()">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
-          </div>
+      <!--      表单结束-->
+      <!--      添加修改菜单-->
+      <el-dialog title="title" :visible.sync="dialogFormVisible" width="600px">
+        <el-form ref="form" :model="form" label-width="80px">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="菜单标题" prop="title">
+                <el-input v-model="form.title" placeholder="请输入菜单标题" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="显示排序" prop="sort">
+                <el-input-number v-model="form.sort" controls-position="right" :min="0" />
+              </el-form-item>
+            </el-col>
+            <!--            <el-col :span="24">-->
+            <!--              <el-form-item label="菜单图标">-->
+            <!--                <el-popover-->
+            <!--                  placement="bottom-start"-->
+            <!--                  width="460"-->
+            <!--                  trigger="click"-->
+            <!--                  @show="$refs['iconSelect'].reset()"-->
+            <!--                >-->
+            <!--                  <IconSelect ref="iconSelect" @selected="selected" />-->
+            <!--                  <el-input slot="reference" v-model="form.icon" placeholder="点击选择图标" readonly>-->
+            <!--                    <svg-icon-->
+            <!--                      v-if="form.icon"-->
+            <!--                      slot="prefix"-->
+            <!--                      :icon-class="form.icon"-->
+            <!--                      class="el-input__icon"-->
+            <!--                      style="height: 32px;width: 16px;"-->
+            <!--                    />-->
+            <!--                    <i v-else slot="prefix" class="el-icon-search el-input__icon" />-->
+            <!--                  </el-input>-->
+            <!--                </el-popover>-->
+            <!--              </el-form-item>-->
+            <!--            </el-col>-->
+            <el-col :span="12">
+              <el-form-item label="英文标识" prop="menuName">
+                <el-input v-model="form.name" placeholder="请输入路由名称" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="路由地址" prop="path">
+                <el-input v-model="form.path" placeholder="请输入路由地址" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="组件路径" prop="component">
+                <el-input v-model="form.component" placeholder="请输入组件路径" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="跳转路径" prop="redirect">
+                <el-input v-model="form.redirect" placeholder="请输入跳转路径" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="菜单状态">
+                <el-radio-group v-model="form.hidden">
+                  <el-radio :key="0" :label="0">显示</el-radio>
+                  <el-radio :key="1" :label="1">隐藏</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
         </div>
-      </el-drawer>
+      </el-dialog>
     </div>
-    <!--侧边弹窗-->
   </div>
 </template>
 <script>
-import { getMenuList, addMenu } from '@/api/menu_list'
-
+import { getMenuList } from '@/api/menu_list'
 export default {
   name: 'MenusList',
   filters: {
@@ -79,21 +131,10 @@ export default {
     return {
       // 菜单表格数据
       menusList: [],
-      // 表单数据
-      dialog: false,
-      loading: false,
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      },
-      formLabelWidth: '80px',
-      timer: null
+      title: '',
+      dialogFormVisible: false,
+      form: {},
+      formLabelWidth: '120px'
     }
   },
   created() {
@@ -105,20 +146,29 @@ export default {
         this.menusList = response.data
       })
     },
-    handleClose(done) {
-      if (this.loading) {
-        return
+    // 表单重置
+    reset() {
+      this.form = {
+        menu_id: undefined,
+        parent_id: 0,
+        name: undefined,
+        icon: undefined,
+        sort: 0,
+        hidden: 0,
+        redirect: ''
       }
-      this.$confirm('确定要提交表单吗？')
-      addMenu().then(response => {
-        console.log(response)
-      })
-        .catch(_ => {})
+      this.resetForm('form')
     },
-    cancelForm() {
-      this.loading = false
-      this.dialog = false
-      clearTimeout(this.timer)
+    // 取消按钮
+    cancel() {
+      this.open = false
+      this.reset()
+    },
+    /** 新增按钮操作 */
+    handleAdd(row) {
+      this.reset()
+      this.dialogFormVisible = true
+      this.title = '添加菜单'
     }
   }
 }
