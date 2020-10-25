@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" plain>添加菜单</el-button>
+    <el-button type="primary" plain @click="dialog = true">添加菜单</el-button>
     <!--    菜单列表主题-->
     <div class="table">
       <el-table :data="menusList" style="width: 100%">
