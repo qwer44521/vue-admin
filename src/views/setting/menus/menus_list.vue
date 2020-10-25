@@ -59,7 +59,7 @@
   </div>
 </template>
 <script>
-import { getMenuList } from '@/api/menu_list'
+import { getMenuList, addMenu } from '@/api/menu_list'
 
 export default {
   name: 'MenusList',
@@ -110,16 +110,9 @@ export default {
         return
       }
       this.$confirm('确定要提交表单吗？')
-        .then(_ => {
-          this.loading = true
-          this.timer = setTimeout(() => {
-            done()
-            // 动画关闭需要一定的时间
-            setTimeout(() => {
-              this.loading = false
-            }, 400)
-          }, 2000)
-        })
+      addMenu().then(response => {
+        console.log(response)
+      })
         .catch(_ => {})
     },
     cancelForm() {
