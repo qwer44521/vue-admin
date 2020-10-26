@@ -44,7 +44,7 @@
             <el-col :span="24">
               <el-form-item label="上级菜单">
                 <treeselect
-                  v-model="form.parent_id"
+                  v-model="form.pid"
                   :options="menuOptions"
                   :normalizer="normalizer"
                   :show-count="true"
@@ -123,7 +123,7 @@
   </div>
 </template>
 <script>
-import { getMenuList } from '@/api/menu_list'
+import { getMenuList, menuSelect } from '@/api/menu_list'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import IconSelect from '@/components/IconSelect'
@@ -172,8 +172,8 @@ export default {
     // 表单重置
     reset() {
       this.form = {
-        menu_id: undefined,
-        parent_id: 0,
+        id: undefined,
+        pid: 0,
         name: undefined,
         icon: undefined,
         sort: 0,
@@ -195,9 +195,8 @@ export default {
     },
     /** 查询菜单下拉树结构 */
     getTreeselect() {
-      getMenuList().then(response => {
-        console.log()
-        this.menuOptions = [response.data]
+      menuSelect().then(response => {
+        this.menuOptions = []
         const menu = { id: 0, title: '主类目', children: [] }
         menu.children = response.data
         this.menuOptions.push(menu)
@@ -211,6 +210,10 @@ export default {
     /** 新增按钮操作 */
     handleAdd(row) {
       this.reset()
+      this.getTreeselect()
+      if (row != null) {
+        this.form.pid = row.id
+      }
       this.dialogFormVisible = true
       this.title = '添加菜单'
     }

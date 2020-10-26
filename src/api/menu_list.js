@@ -20,3 +20,12 @@ export function addMenu(data) {
     }
   )
 }
+// 获取后台菜单结构
+export function menuSelect() {
+  return request(
+    {
+      url: '/api/menuselect',
+      method: 'get'
+    }
+  )
+}
