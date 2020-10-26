@@ -35,10 +35,30 @@
             </el-tag>
           </template>
         </el-table-column>
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button
+              v-permission="['system:menu:edit']"
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdate(scope.row)"
+            >修改
+            </el-button>
+            <el-button
+              v-permission="['system:menu:del']"
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDelete(scope.row)"
+            >删除
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <!--      表单结束-->
       <!--      添加修改菜单-->
-      <el-dialog title="title" :visible.sync="dialogFormVisible" width="600px">
+      <el-dialog :title="title" :visible.sync="dialogFormVisible" width="600px">
         <el-form ref="form" :model="form" label-width="80px">
           <el-row>
             <el-col :span="24">
@@ -115,7 +135,7 @@
           </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary">确 定</el-button>
+          <el-button type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
         </div>
       </el-dialog>
@@ -123,7 +143,7 @@
   </div>
 </template>
 <script>
-import { getMenuList, menuSelect } from '@/api/menu_list'
+import { getMenuList, addMenu, menuSelect } from '@/api/menu_list'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import IconSelect from '@/components/IconSelect'
@@ -161,9 +181,11 @@ export default {
     this.getMenu()
   },
   methods: {
+    // 图标列表
     selected(name) {
       this.form.icon = name
     },
+    // 获取菜单列表数据
     getMenu() {
       getMenuList().then(response => {
         this.menusList = response.data
@@ -216,6 +238,40 @@ export default {
       }
       this.dialogFormVisible = true
       this.title = '添加菜单'
+    },
+    /** 新增按钮操作 */
+    handleUpdate(row) {
+      this.reset()
+      this.getTreeselect()
+      // eslint-disable-next-line no-undef
+      getMenu({ menu_id: row.menu_id }).then(response => {
+        this.form = response.data
+        this.open = true
+        this.title = '修改菜单'
+      })
+      this.dialogFormVisible = true
+      this.title = '添加菜单'
+    },
+    /** 提交按钮 */
+    submitForm: function() {
+      this.$refs['form'].validate(valid => {
+        if (valid) {
+          if (this.form.menu_id !== undefined) {
+            // updateMenu(this.form.menu_id, this.form).then(response => {
+            //   this.msgSuccess(response.message)
+            //   this.open = false
+            //   this.getList()
+            // })
+          } else {
+            addMenu(this.form).then(response => {
+              console.log(response)
+              this.msgSuccess('新增成功')
+              this.dialogFormVisible = false
+              this.getMenu()
+            })
+          }
+        }
+      })
     }
   }
 }
