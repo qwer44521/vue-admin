@@ -41,6 +41,17 @@
       <el-dialog title="title" :visible.sync="dialogFormVisible" width="600px">
         <el-form ref="form" :model="form" label-width="80px">
           <el-row>
+            <el-col :span="24">
+              <el-form-item label="上级菜单">
+                <treeselect
+                  v-model="form.parent_id"
+                  :options="menuOptions"
+                  :normalizer="normalizer"
+                  :show-count="true"
+                  placeholder="选择上级菜单"
+                />
+              </el-form-item>
+            </el-col>
             <el-col :span="12">
               <el-form-item label="菜单标题" prop="title">
                 <el-input v-model="form.title" placeholder="请输入菜单标题" />
@@ -113,10 +124,12 @@
 </template>
 <script>
 import { getMenuList } from '@/api/menu_list'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import IconSelect from '@/components/IconSelect'
 export default {
   name: 'MenusList',
-  components: { IconSelect },
+  components: { Treeselect, IconSelect },
   filters: {
     filterHidden: function(value) {
       switch (value) {
@@ -133,8 +146,13 @@ export default {
     return {
       // 菜单表格数据
       menusList: [],
+      // 菜单选项
+      menuOptions: [],
+      // 弹出层标题
       title: '',
+      // 是否显示弹出层
       dialogFormVisible: false,
+      // 表单参数
       form: {},
       formLabelWidth: '120px'
     }
@@ -163,6 +181,27 @@ export default {
         redirect: ''
       }
       this.resetForm('form')
+    },
+    /** 转换菜单数据结构 */
+    normalizer(node) {
+      if (node.children && !node.children.length) {
+        delete node.children
+      }
+      return {
+        id: node.id,
+        label: node.title,
+        children: node.children
+      }
+    },
+    /** 查询菜单下拉树结构 */
+    getTreeselect() {
+      getMenuList().then(response => {
+        console.log()
+        this.menuOptions = [response.data]
+        const menu = { id: 0, title: '主类目', children: [] }
+        menu.children = response.data
+        this.menuOptions.push(menu)
+      })
     },
     // 取消按钮
     cancel() {
