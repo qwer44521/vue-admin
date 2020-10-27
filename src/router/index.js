@@ -131,7 +131,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'menus_list',
-        component: () => import('@/views/setting/menus/menus_list'),
+        component: () => import('@/views/setting/roles/roles_list'),
         name: 'ceshi',
         meta: { title: 'ceshi', icon: 'guide', noCache: true }
       }
