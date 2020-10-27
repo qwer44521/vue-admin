@@ -25,8 +25,8 @@ export function filterAsyncRoutes(routes) {
     } else {
       tmp.hidden = true
     }
-    if (route.ico) {
-      tmp.meta.icon = route.ico
+    if (route.icon) {
+      tmp.meta.icon = route.icon
     }
     if (tmp.children) {
       if (tmp.children.length) {

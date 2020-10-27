@@ -9,7 +9,25 @@ export function getMenuList() {
     }
   )
 }
-
+// 根据id获取单个菜单数据
+export function getMenu(id) {
+  return request(
+    {
+      url: '/api/getmenu?id=' + id,
+      method: 'get'
+    }
+  )
+}
+// 修改菜单
+export function updateMenu(id, data) {
+  return request(
+    {
+      url: '/api/updatemenu?id=' + id,
+      method: 'post',
+      data
+    }
+  )
+}
 // 新增菜单
 export function addMenu(data) {
   return request(

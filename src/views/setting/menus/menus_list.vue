@@ -143,7 +143,7 @@
   </div>
 </template>
 <script>
-import { getMenuList, addMenu, menuSelect } from '@/api/menu_list'
+import { getMenuList, addMenu, getMenu, updateMenu, menuSelect } from '@/api/menu_list'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import IconSelect from '@/components/IconSelect'
@@ -239,29 +239,26 @@ export default {
       this.dialogFormVisible = true
       this.title = '添加菜单'
     },
-    /** 新增按钮操作 */
+    /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
       this.getTreeselect()
-      // eslint-disable-next-line no-undef
-      getMenu({ menu_id: row.menu_id }).then(response => {
+      getMenu(row.id).then(response => {
+        console.log(row.id)
         this.form = response.data
-        this.open = true
+        this.dialogFormVisible = true
         this.title = '修改菜单'
       })
-      this.dialogFormVisible = true
-      this.title = '添加菜单'
     },
     /** 提交按钮 */
     submitForm: function() {
       this.$refs['form'].validate(valid => {
         if (valid) {
-          if (this.form.menu_id !== undefined) {
-            // updateMenu(this.form.menu_id, this.form).then(response => {
-            //   this.msgSuccess(response.message)
-            //   this.open = false
-            //   this.getList()
-            // })
+          if (this.form.id !== undefined) {
+            updateMenu(this.form.id, this.form).then(response => {
+              this.dialogFormVisible = false
+              this.getMenu()
+            })
           } else {
             addMenu(this.form).then(response => {
               console.log(response)

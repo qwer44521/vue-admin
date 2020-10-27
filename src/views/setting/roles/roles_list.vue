@@ -1,12 +1,12 @@
 <template>
-<div>
-  qweret
-</div>
+  <div>
+    sxsxss
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'Index'
+  name: 'RolesList'
 }
 </script>
 
