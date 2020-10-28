@@ -27,7 +27,6 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button
-              v-permission="['system:menu:edit']"
               size="mini"
               type="text"
               icon="el-icon-edit"
@@ -35,7 +34,6 @@
             >修改
             </el-button>
             <el-button
-              v-permission="['system:menu:del']"
               size="mini"
               type="text"
               icon="el-icon-delete"
