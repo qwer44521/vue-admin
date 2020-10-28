@@ -1,20 +1,9 @@
 <template>
   <div class="app-container">
     <el-button type="primary" @click="handleAdd">添加菜单</el-button>
-    <!--    <el-form :inline="true">-->
-    <!--      <el-form-item>-->
-    <!--&lt;!&ndash;        <el-button&ndash;&gt;-->
-    <!--&lt;!&ndash;          type="primary"&ndash;&gt;-->
-    <!--&lt;!&ndash;          icon="el-icon-plus"&ndash;&gt;-->
-    <!--&lt;!&ndash;          size="mini"&ndash;&gt;-->
-    <!--&lt;!&ndash;          @click="handleAdd"&ndash;&gt;-->
-    <!--&lt;!&ndash;        >新增&ndash;&gt;-->
-    <!--&lt;!&ndash;        </el-button>&ndash;&gt;-->
-    <!--      </el-form-item>-->
-    <!--    </el-form>-->
     <!--    菜单列表主题-->
     <div class="table">
-      <el-table :data="menusList" style="width: 100%">
+      <el-table :data="menuslist" style="width: 100%">
         <el-table-column prop="id" label="ID" width="40" />
         <el-table-column prop="title" label="名称" width="180" />
         <el-table-column prop="name" label="唯一标识" />
@@ -146,9 +135,9 @@
 import { getMenuList, addMenu, getMenu, updateMenu, menuSelect } from '@/api/menu_list'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import IconSelect from '@/components/IconSelect'
+import IconSelect from '@/components/IconSelect/index'
 export default {
-  name: 'MenusList',
+  name: 'Menuslist',
   components: { Treeselect, IconSelect },
   filters: {
     filterHidden: function(value) {
@@ -165,7 +154,7 @@ export default {
   data() {
     return {
       // 菜单表格数据
-      menusList: [],
+      menuslist: [],
       // 菜单选项
       menuOptions: [],
       // 弹出层标题
@@ -188,7 +177,7 @@ export default {
     // 获取菜单列表数据
     getMenu() {
       getMenuList().then(response => {
-        this.menusList = response.data
+        this.menuslist = response.data
       })
     },
     // 表单重置
