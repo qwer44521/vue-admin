@@ -48,12 +48,19 @@
         </el-form-item>
         <el-form-item label="菜单权限">
           <el-tree
-            :props="props"
-            :load="loadNode"
-            lazy
+            ref="menu"
+            :data="menuOptions"
             show-checkbox
-            @check-change="handleCheckChange"
-          />
+            node-key="id"
+            empty-text="加载中，请稍后"
+            :props="defaultProps"
+            :check-strictly="checkStrictly"
+          >
+            <span slot-scope="{ node, data }" class="custom-tree-node">
+              <span>{{ node.label }}</span>
+              <span v-if="data.children === undefined || data.children.length === 0" class="custom-tree-node-btns" />
+            </span>
+          </el-tree>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -61,6 +68,7 @@
 </template>
 <script>
 import { getRoles } from '@/api/roles'
+import { menuSelect } from '@/api/menu_list'
 export default {
   name: 'RolesList',
   data() {
@@ -72,8 +80,15 @@ export default {
       form: {},
       // 是否显示弹出层
       open: false,
+      // tree关联状态
+      checkStrictly: false,
       // 权限管理的菜单项
-      menuOptions: []
+      menuOptions: [],
+      // 节点数据
+      defaultProps: {
+        children: 'children',
+        label: 'title'
+      }
     }
   },
   created() {
@@ -86,12 +101,41 @@ export default {
         this.role_list = response.data
       })
     },
+    // 查询菜单的树形结构
+    /** 查询菜单树结构 */
+    getMenuTreeselect(buttons = [], defaultKeys = null) {
+      this.checkStrictly = true
+      menuSelect().then(response => {
+        console.log(response)
+        this.menuOptions = this.mergeTreeButton(response.data, buttons)
+        if (defaultKeys && defaultKeys.length > 0) {
+          this.$refs.menu.setCheckedKeys(defaultKeys)
+        }
+        this.checkStrictly = false
+      })
+    },
+    /** 组合次菜单 button */
+    mergeTreeButton(tree, buttons = []) {
+      tree.forEach((item, key) => {
+        tree[key].buttons = []
+        buttons.filter(_item => {
+          if (_item.menu_id === item.menu_id) {
+            tree[key].buttons = _item.btns
+            return true
+          }
+        })
+        if (item.children && item.children.length > 0) {
+          this.mergeTreeButton(item.children, buttons)
+        }
+      })
+      return tree
+    },
     /** 新增按钮操作 */
     handleAdd() {
-      // this.reset()
-      // this.getMenuTreeselect()
+      this.reset()
+      this.getMenuTreeselect()
       this.open = true
-      // this.title = '添加角色'
+      this.title = '添加角色'
     }
   }
 

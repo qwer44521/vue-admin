@@ -205,6 +205,7 @@ export default {
     /** 查询菜单下拉树结构 */
     getTreeselect() {
       menuSelect().then(response => {
+        console.log(response)
         this.menuOptions = []
         const menu = { id: 0, title: '主类目', children: [] }
         menu.children = response.data
