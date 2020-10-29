@@ -6,3 +6,10 @@ export function getRoles() {
     method: 'get'
   })
 }
+export function addRoles(data) {
+  return request({
+    url: '/api/addroles',
+    method: 'post',
+    data
+  })
+}

@@ -37,8 +37,8 @@
     <!-- 添加或修改角色配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="750px">
       <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="角色名称" prop="role_name">
-          <el-input v-model="form.role_name" placeholder="请输入角色名称" />
+        <el-form-item label="角色名称" prop="r_name">
+          <el-input v-model="form.r_name" placeholder="请输入角色名称" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
@@ -62,12 +62,19 @@
             </span>
           </el-tree>
         </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import { getRoles } from '@/api/roles'
+import { getRoles, addRoles } from '@/api/roles'
 import { menuSelect } from '@/api/menu_list'
 export default {
   name: 'RolesList',
@@ -78,17 +85,18 @@ export default {
       title: '',
       // 表单参数
       form: {},
+      // 节点数据
+      defaultProps: {
+        children: 'children',
+        label: 'title'
+      },
       // 是否显示弹出层
       open: false,
       // tree关联状态
       checkStrictly: false,
       // 权限管理的菜单项
       menuOptions: [],
-      // 节点数据
-      defaultProps: {
-        children: 'children',
-        label: 'title'
-      }
+      idm: []
     }
   },
   created() {
@@ -104,9 +112,15 @@ export default {
     // 查询菜单的树形结构
     /** 查询菜单树结构 */
     getMenuTreeselect(buttons = [], defaultKeys = null) {
+      // var that = this
       this.checkStrictly = true
       menuSelect().then(response => {
-        console.log(response)
+        // 处理菜单选项的id
+        // that.idm.push(response.data.id)
+        // // response.data.children.foreach(function(item, index) {
+        // //   that.idm.push(item.id)
+        // // })
+        // console.log(response.data)
         this.menuOptions = this.mergeTreeButton(response.data, buttons)
         if (defaultKeys && defaultKeys.length > 0) {
           this.$refs.menu.setCheckedKeys(defaultKeys)
@@ -130,12 +144,80 @@ export default {
       })
       return tree
     },
+    // 所有菜单节点数据
+    getMenuAllCheckedKeys() {
+      // 目前被选中的菜单节点
+      const checkedKeys = this.$refs.menu.getHalfCheckedKeys()
+      // 半选中的菜单节点
+      const halfCheckedKeys = this.$refs.menu.getCheckedKeys()
+      checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys)
+      return checkedKeys
+    },
     /** 新增按钮操作 */
     handleAdd() {
       this.reset()
       this.getMenuTreeselect()
       this.open = true
       this.title = '添加角色'
+    },
+    checkBtn(node) {
+      if (this.buttons.length > 0) {
+        const has = this.buttons.filter((item, key) => {
+          if (item.menu_id === node.data.menu_id) {
+            this.buttons[key].btns = node.data.buttons
+            return true
+          }
+        })
+        if (has.length === 0) {
+          this.buttons.push({ 'menu_id': node.data.menu_id, 'btns': node.data.buttons })
+        }
+      } else {
+        this.buttons.push({ 'menu_id': node.data.menu_id, 'btns': node.data.buttons })
+      }
+    },
+    /** 提交按钮 */
+    submitForm: function() {
+      this.$refs['form'].validate(valid => {
+        if (valid) {
+          // this.form.buttons = this.buttons
+          if (this.form.role_id !== undefined) {
+            // this.form.menu_ids = this.getMenuAllCheckedKeys()
+            // updateRole(this.form.role_id, this.form).then(response => {
+            //   this.msgSuccess(response.message)
+            //   this.open = false
+            //   this.getList()
+            // })
+          } else {
+            this.form.idm = this.getMenuAllCheckedKeys()
+            console.log(this.form)
+            addRoles(this.form).then(response => {
+              console.log(response)
+              this.open = false
+              this.getList()
+            })
+          }
+        }
+      })
+    },
+    // 表单重置
+    reset() {
+      if (this.$refs.menu !== undefined) {
+        this.$refs.menu.setCheckedKeys([])
+      }
+      this.form = {
+        id: undefined,
+        r_name: undefined,
+        status: 0,
+        idm: [],
+        remark: undefined
+      }
+      this.buttons = []
+      this.resetForm('form')
+    },
+    // 取消按钮
+    cancel() {
+      this.open = false
+      this.reset()
     }
   }
 
