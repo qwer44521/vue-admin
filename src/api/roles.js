@@ -13,3 +13,10 @@ export function addRoles(data) {
     data
   })
 }
+export function updateRoles(id, data) {
+  return request({
+    url: '/api/updateRoles',
+    method: 'post',
+    data
+  })
+}

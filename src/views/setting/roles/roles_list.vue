@@ -40,6 +40,9 @@
         <el-form-item label="角色名称" prop="r_name">
           <el-input v-model="form.r_name" placeholder="请输入角色名称" />
         </el-form-item>
+        <el-form-item label="英文标识" prop="roles">
+          <el-input v-model="form.roles" placeholder="请输入英文标识" />
+        </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio :key="1" :label="1">启用</el-radio>
@@ -74,7 +77,7 @@
   </div>
 </template>
 <script>
-import { getRoles, addRoles } from '@/api/roles'
+import { getRoles, addRoles, updateRoles } from '@/api/roles'
 import { menuSelect } from '@/api/menu_list'
 export default {
   name: 'RolesList',
@@ -169,24 +172,43 @@ export default {
           }
         })
         if (has.length === 0) {
-          this.buttons.push({ 'menu_id': node.data.menu_id, 'btns': node.data.buttons })
+          this.buttons.push({ 'menu_id': node.data.menu_id })
         }
       } else {
-        this.buttons.push({ 'menu_id': node.data.menu_id, 'btns': node.data.buttons })
+        this.buttons.push({ 'menu_id': node.data.menu_id })
       }
+    },
+    /** 修改按钮操作 */
+    handleUpdate(row) {
+      this.reset()
+      this.defaultKeys = row.idm || []
+      this.$nextTick(() => {
+        this.getMenuTreeselect(row.buttons, this.defaultKeys)
+      })
+      this.form = {
+        id: row.id,
+        r_name: row.r_name,
+        status: row.status,
+        menu_ids: row.idm,
+        buttons: row.buttons,
+        remark: row.remark
+      }
+      this.buttons = row.buttons
+      this.open = true
+      this.title = '修改角色'
     },
     /** 提交按钮 */
     submitForm: function() {
       this.$refs['form'].validate(valid => {
         if (valid) {
           // this.form.buttons = this.buttons
-          if (this.form.role_id !== undefined) {
-            // this.form.menu_ids = this.getMenuAllCheckedKeys()
-            // updateRole(this.form.role_id, this.form).then(response => {
-            //   this.msgSuccess(response.message)
-            //   this.open = false
-            //   this.getList()
-            // })
+          if (this.form.id !== undefined) {
+            this.form.idm = this.getMenuAllCheckedKeys()
+            updateRoles(this.form.id, this.form).then(response => {
+              this.msgSuccess(response.message)
+              this.open = false
+              this.getList()
+            })
           } else {
             this.form.idm = this.getMenuAllCheckedKeys()
             console.log(this.form)
