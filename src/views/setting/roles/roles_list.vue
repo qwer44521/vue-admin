@@ -187,6 +187,7 @@ export default {
       })
       this.form = {
         id: row.id,
+        roles: row.roles,
         r_name: row.r_name,
         status: row.status,
         menu_ids: row.idm,
