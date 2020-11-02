@@ -18,6 +18,7 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="180">
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.id !== 1"
             size="mini"
             type="text"
             icon="el-icon-edit"
@@ -25,6 +26,7 @@
           >修改
           </el-button>
           <el-button
+            v-if="scope.row.id !== 1"
             size="mini"
             type="text"
             icon="el-icon-delete"
@@ -36,7 +38,7 @@
     </el-table>
     <!-- 添加或修改角色配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="750px">
-      <el-form ref="form" :model="form" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="角色名称" prop="r_name">
           <el-input v-model="form.r_name" placeholder="请输入角色名称" />
         </el-form-item>
@@ -88,6 +90,15 @@ export default {
       title: '',
       // 表单参数
       form: {},
+      // 表单规则验证
+      rules: {
+        r_name: [
+          { required: true, message: '角色名称不能为空', trigger: 'blur' }
+        ],
+        roles: [
+          { required: true, message: '英文标识不能为空', trigger: 'blur' }
+        ]
+      },
       // 节点数据
       defaultProps: {
         children: 'children',
@@ -190,7 +201,7 @@ export default {
         roles: row.roles,
         r_name: row.r_name,
         status: row.status,
-        menu_ids: row.idm,
+        idm: row.idm,
         buttons: row.buttons,
         remark: row.remark
       }
@@ -202,11 +213,9 @@ export default {
     submitForm: function() {
       this.$refs['form'].validate(valid => {
         if (valid) {
-          // this.form.buttons = this.buttons
           if (this.form.id !== undefined) {
             this.form.idm = this.getMenuAllCheckedKeys()
             updateRoles(this.form.id, this.form).then(response => {
-              this.msgSuccess(response.message)
               this.open = false
               this.getList()
             })
