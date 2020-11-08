@@ -66,32 +66,32 @@
           <el-form-item label="密码" prop="password">
             <el-input v-model="form.password" placeholder="请输入用户名" show-password />
           </el-form-item>
-          <el-form-item label="上传头像" prop="avatar">
-            <el-upload
-              ref="upload"
-              class="upload-demo"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :file-list="fileList"
-              :auto-upload="false"
-            >
-              <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-              <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>
+          <el-form-item label="状态" prop="status">
+            <el-radio-group v-model="form.status">
+              <el-radio :key="1" :label="1">启用</el-radio>
+              <el-radio :key="0" :label="0">停用</el-radio>
+            </el-radio-group>
           </el-form-item>
           <el-form-item label="所属角色" prop="roles">
             <template>
-              <el-radio-group v-model="radio">
-                <el-radio :label="3">备选项</el-radio>
-                <el-radio :label="6">备选项</el-radio>
-                <el-radio :label="9">备选项</el-radio>
-                <el-radio :label="9">备选项</el-radio>
-              </el-radio-group>
+              <el-select v-model="form.roles_id" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.id"
+                  :label="item.r_name"
+                  :value="item.id"
+                />
+              </el-select>
             </template>
           </el-form-item>
+          <el-form-item label="备注">
+            <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+          </el-form-item>
         </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button>取 消</el-button>
+        </div>
       </el-dialog>
       <!--      新增或修改结束-->
     </div>
@@ -99,8 +99,7 @@
 </template>
 
 <script>
-import { getAdminList } from '@/api/administrators'
-
+import { getAdminList, getAdminRoles } from '@/api/administrators'
 export default {
   name: 'Administrators',
   filters: {
@@ -128,7 +127,9 @@ export default {
       // 图片信息
       fileList: [],
       // 单选框
-      radio: 3
+      options: [
+      ],
+      roles_id: []
     }
   },
   created() {
@@ -144,18 +145,40 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+      this.getRolesSelect()
       this.open = true
       this.title = '添加角色'
     },
-    submitUpload() {
-      this.$refs.upload.submit()
+    /** 查询角色下拉菜单 */
+    getRolesSelect() {
+      getAdminRoles().then(reponse => {
+        console.log(reponse.data)
+        this.options = reponse.data
+      })
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList)
-    },
-    handlePreview(file) {
-      console.log(file)
+    /** 提交按钮 */
+    submitForm: function() {
+      this.$refs['form'].validate(valid => {
+        if (valid) {
+          if (this.form.id !== undefined) {
+            // this.form.idm = this.getMenuAllCheckedKeys()
+            // updateRoles(this.form.id, this.form).then(response => {
+            //   this.open = false
+            //   this.getList()
+            // })
+          } else {
+            // this.form.idm = this.getMenuAllCheckedKeys()
+            console.log(this.form)
+            // addRoles(this.form).then(response => {
+            //   console.log(response)
+            //   this.open = false
+            //   this.getList()
+            // })
+          }
+        }
+      })
     }
+
   }
 
 }

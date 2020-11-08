@@ -18,3 +18,13 @@ export function getAdminRoles() {
     }
   )
 }
+// 上传头像
+export function avatarUpload(data) {
+  return request(
+    {
+      url: '/api/avatarupload',
+      method: 'post',
+      data
+    }
+  )
+}
