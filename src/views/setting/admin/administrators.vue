@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { getAdminList, getAdminRoles } from '@/api/administrators'
+import { getAdminList, getAdminRoles, addAdministrators } from '@/api/administrators'
 export default {
   name: 'Administrators',
   filters: {
@@ -145,9 +145,31 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+      this.reset()
       this.getRolesSelect()
       this.open = true
       this.title = '添加角色'
+    },
+    /** 修改按钮操作 */
+    handleUpdate(row) {
+      this.reset()
+      this.getRolesSelect()
+      this.defaultKeys = row.roles_id || []
+      // this.$nextTick(() => {
+      //   this.getMenuTreeselect(row.buttons, this.defaultKeys)
+      // })
+      this.form = {
+        id: row.id,
+        nickname: row.nickname,
+        username: row.username,
+        password: undefined,
+        status: row.status,
+        roles_id: row.roles_id,
+        remark: row.remark
+      }
+      // this.buttons = row.buttons
+      this.open = true
+      this.title = '修改角色'
     },
     /** 查询角色下拉菜单 */
     getRolesSelect() {
@@ -167,16 +189,30 @@ export default {
             //   this.getList()
             // })
           } else {
-            // this.form.idm = this.getMenuAllCheckedKeys()
-            console.log(this.form)
-            // addRoles(this.form).then(response => {
-            //   console.log(response)
-            //   this.open = false
-            //   this.getList()
-            // })
+            addAdministrators(this.form).then(response => {
+              console.log(response)
+              this.open = false
+              this.getAdmin()
+            })
           }
         }
       })
+    },
+    // 表单重置
+    reset() {
+      // if (this.$refs.menu !== undefined) {
+      //   this.$refs.menu.setCheckedKeys([])
+      // }
+      this.form = {
+        nickname: undefined,
+        username: undefined,
+        password: undefined,
+        status: 1,
+        roles_id: [],
+        remark: undefined
+      }
+      this.buttons = []
+      this.resetForm('form')
     }
 
   }

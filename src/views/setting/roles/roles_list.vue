@@ -233,9 +233,9 @@ export default {
     },
     // 表单重置
     reset() {
-      if (this.$refs.menu !== undefined) {
-        this.$refs.menu.setCheckedKeys([])
-      }
+      // if (this.$refs.menu !== undefined) {
+      //   this.$refs.menu.setCheckedKeys([])
+      // }
       this.form = {
         id: undefined,
         r_name: undefined,
