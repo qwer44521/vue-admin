@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { getAdminList, getAdminRoles, addAdministrators } from '@/api/administrators'
+import { getAdminList, getAdminRoles, updateadmin, addAdministrators } from '@/api/administrators'
 export default {
   name: 'Administrators',
   filters: {
@@ -184,10 +184,11 @@ export default {
         if (valid) {
           if (this.form.id !== undefined) {
             // this.form.idm = this.getMenuAllCheckedKeys()
-            // updateRoles(this.form.id, this.form).then(response => {
-            //   this.open = false
-            //   this.getList()
-            // })
+            updateadmin(this.form.id, this.form).then(response => {
+              console.log(response)
+              this.open = false
+              this.getAdmin()
+            })
           } else {
             addAdministrators(this.form).then(response => {
               console.log(response)

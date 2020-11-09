@@ -28,6 +28,17 @@ export function addAdministrators(data) {
     }
   )
 }
+// 修改管理员信息
+export function updateadmin(id, data) {
+  return request(
+    {
+      url: '/api/updateadmin',
+      method: 'post',
+      data
+    }
+  )
+}
+
 // 根据id获取单个管理员信息
 export function getadminById(id, data) {
   return request(
